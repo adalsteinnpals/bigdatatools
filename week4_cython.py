@@ -6,6 +6,7 @@ from scipy import *
 import numpy as np
 import time
 import querycalculate
+from multiprocessing import Process
 
 
 X1 = pickle.load(open('data_10points_10dims.dat', 'r'))
@@ -36,6 +37,18 @@ def expandCluster(P, neighbours, C, eps, M, checked):
         if len(neighboursm) >= M:
             neighbours = list(neighbours) + list(set(neighboursm) - set(neighbours))
         cluster[P] = C
+        
+        
+def runInParallel(*fns):
+  proc = []
+  for fn in fns:
+    p = Process(target=fn)
+    p.start()
+    proc.append(p)
+  for p in proc:
+    p.join()
+
+runInParallel(querycalculate.calculate_neightbours(Y3))
         
                 
         
@@ -74,10 +87,16 @@ time1 = t2-t1
 time2 = t3-t2
 
 
-
-import querycalculate
 start = time.time()
-a = querycalculate.print_csr(Y5)
+a = querycalculate.calculate_neightbours(Y4)
+stop = time.time()
+elapsed = stop - start
+elapsed
+
+
+start = time.time()
+a = querycalculate.csr_get_indices(Y5)
+b = querycalculate.csr_get_indptr(Y5)
 stop = time.time()
 elapsed = stop - start
 elapsed
